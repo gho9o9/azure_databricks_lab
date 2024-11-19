@@ -119,9 +119,9 @@ display(spark
 # DBTITLE 0,--i18n-24790eda-96df-49bb-af34-b1ed839fa80a
 # MAGIC %md
 # MAGIC ## SparkSession
-# MAGIC The **`SparkSession`** class is the single entry point to all functionality in Spark using the DataFrame API.
+# MAGIC **`SparkSession`** クラスは、DataFrame API を使用する Spark の全ての機能への単一のエントリポイントです。  
 # MAGIC
-# MAGIC In Databricks notebooks, the SparkSession is created for you, stored in a variable called **`spark`**.
+# MAGIC Databricks のノートブックでは、SparkSession が作成され、 **`spark`** という変数に格納されます。
 
 # COMMAND ----------
 
@@ -231,6 +231,20 @@ budget_df.printSchema()
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC
+# MAGIC ## SQL クエリ
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT name, price
+# MAGIC FROM products
+# MAGIC WHERE price < 200
+# MAGIC ORDER BY price
+
+# COMMAND ----------
+
 # DBTITLE 0,--i18n-7ad577db-093a-40fb-802e-99bbc5a4435b
 # MAGIC %md
 # MAGIC
@@ -332,6 +346,11 @@ budget_df.createOrReplaceTempView("budget")
 # COMMAND ----------
 
 display(spark.sql("SELECT * FROM budget"))
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT * FROM budget
 
 # COMMAND ----------
 

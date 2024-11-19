@@ -93,21 +93,6 @@ print("I'm running Python!")
 
 # COMMAND ----------
 
-# DBTITLE 0,--i18n-3185e9b5-fcba-40aa-916b-5f3daa555cf5
-# MAGIC %md
-# MAGIC
-# MAGIC ### SQLセルを作成して実行する
-# MAGIC
-# MAGIC * このセルをハイライトし、キーボードの **B** ボタンを押して、下に新しいセルを作成します
-# MAGIC * 次のコードを下のセルにコピーしてから、セルを実行します
-# MAGIC
-# MAGIC **`%sql`**<br/>
-# MAGIC **`SELECT "SQLを実行しています！"`**
-# MAGIC
-# MAGIC **注意**: セルの追加、移動、削除にはさまざまな方法があり、GUIオプションやキーボードショートカットが含まれます。詳細については、<a href="https://docs.databricks.com/notebooks/notebooks-use.html#develop-notebooks" target="_blank">ドキュメント</a>を参照してください。
-
-# COMMAND ----------
-
 # DBTITLE 0,--i18n-5046f81c-cdbf-42c3-9b39-3be0721d837e
 # MAGIC %md
 # MAGIC
@@ -300,11 +285,11 @@ dbutils.fs.ls(path)
 # MAGIC
 # MAGIC ## display()
 # MAGIC
-# MAGIC When running SQL queries from cells, results will always be displayed in a rendered tabular format.
+# MAGIC セルから SQL クエリを実行すると、結果は常にレンダリングされた表形式で表示されます。
 # MAGIC
-# MAGIC When we have tabular data returned by a Python cell, we can call **`display`** to get the same type of preview.
+# MAGIC Python のセルから返される表形式のデータがある場合、 **`display`** を呼び出すことで同じようなプレビューを得ることができます。
 # MAGIC
-# MAGIC Here, we'll wrap the previous list command on our file system with **`display`**.
+# MAGIC ここでは、ファイルシステムの list コマンドを **`display`** でラッピングします。
 
 # COMMAND ----------
 
