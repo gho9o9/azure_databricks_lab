@@ -4,7 +4,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ./00_Setup
+# MAGIC %run ./00.1_Set_Environment
 
 # COMMAND ----------
 

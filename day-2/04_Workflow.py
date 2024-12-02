@@ -30,7 +30,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ./00_Setup
+# MAGIC %run ./00.1_Set_Environment
 
 # COMMAND ----------
 
@@ -44,7 +44,7 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- SELECT * from json.`${sample.dataset}/orders-json-streaming/05.json` where customer_id = "C00788"
+# MAGIC SELECT * from json.`${sample.dataset}/orders-json-streaming/02.json` where customer_id = "C00788"
 
 # COMMAND ----------
 

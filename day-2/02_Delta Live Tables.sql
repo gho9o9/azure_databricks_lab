@@ -34,8 +34,7 @@
 -- MAGIC    * **更新時**をすべてチェック
 -- MAGIC    * **フロー**をすべてチェック
 -- MAGIC 1. **設定**で`設定を追加`を押下し下記の 2 つを設定します。
--- MAGIC    * **キー**に `mypipeline.catalog_name` を入力し **値**にラボで利用している `カタログ` を入力
--- MAGIC    * **キー**に `mypipeline.schema_name` を入力し **値**にラボで利用している `スキーマ` を入力
+-- MAGIC    * **キー**に `sample.dataset` を入力し **値**に `00.1_Set_Environment`で定義された `sample_dataset`のパス文字列 を入力します。
 -- MAGIC 1. **作成**を押下します。
 -- MAGIC 1. **開始**を押下します。
 

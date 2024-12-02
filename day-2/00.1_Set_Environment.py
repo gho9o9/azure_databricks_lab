@@ -1,42 +1,30 @@
 # Databricks notebook source
+# 環境固有パラメータ定義
+
 your_catalog = "o9o9dbw" # 講師から提示されるカタログ名を入力してください
 your_schema = "handson_day2_tooota" # 参加者全体で一意となるようあなたに固有の識別子をアルファベットで入力してください
-data_source_uri = "abfss://o9o9dbw-catalog@o9o9stdbwcatalog.dfs.core.windows.net/bookstore" # 講師から提示されるパスを入力してください
-sample_dataset = 'dbfs:/mnt/adb-handson-day2/bookstore'
+
+# COMMAND ----------
+
+# 環境共通パラメータ定義
+
+your_volume = "sample_dataset_volume"
+volume_path = "/Volumes/" + your_catalog + "/" + your_schema + "/" + your_volume
+sample_dataset = volume_path
 spark.conf.set(f"sample.dataset", sample_dataset) # for SQL Context
+print("sample_dataset = " + sample_dataset)
 
 # COMMAND ----------
 
-def set_current_context(catalog_name, schema_name):
-    spark.sql(f"USE CATALOG {catalog_name}")
-    spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
-    spark.sql(f"USE DATABASE {schema_name}")
+# コンテキスト設定
+
+spark.sql(f"USE CATALOG {your_catalog}")
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {your_catalog}.{your_schema}")
+spark.sql(f"USE DATABASE {your_schema}")
 
 # COMMAND ----------
 
-def path_exists(path):
-  try:
-    dbutils.fs.ls(path)
-    return True
-  except Exception as e:
-    if 'java.io.FileNotFoundException' in str(e):
-      return False
-    else:
-      raise
-
-# COMMAND ----------
-
-def download_dataset(source, target):
-    files = dbutils.fs.ls(source)
-
-    for f in files:
-        source_path = f"{source}/{f.name}"
-        target_path = f"{target}/{f.name}"
-        if not path_exists(target_path):
-            print(f"Copying {f.name} ...")
-            dbutils.fs.cp(source_path, target_path, True)
-
-# COMMAND ----------
+# ユーティリティ関数定義
 
 def get_index(dir):
     files = dbutils.fs.ls(dir)
@@ -45,8 +33,6 @@ def get_index(dir):
         file = max(files).name
         index = int(file.rsplit('.', maxsplit=1)[0])
     return index+1
-
-# COMMAND ----------
 
 # Structured Streaming
 streaming_dir = f"{sample_dataset}/orders-streaming"
@@ -70,8 +56,6 @@ def load_new_data(all=False):
     else:
         load_file(index)
         index += 1
-
-# COMMAND ----------
 
 # DLT
 streaming_orders_dir = f"{sample_dataset}/orders-json-streaming"
@@ -100,9 +84,3 @@ def load_new_json_data(all=False):
     else:
         load_json_file(index)
         index += 1
-
-# COMMAND ----------
-
-download_dataset(data_source_uri, sample_dataset)
-set_current_context(your_catalog, your_schema)
-print("Setup completed.")

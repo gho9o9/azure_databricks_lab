@@ -7,7 +7,7 @@
 
 # COMMAND ----------
 
-# MAGIC %run ./00_Setup
+# MAGIC %run ./00.1_Set_Environment
 
 # COMMAND ----------
 
@@ -179,10 +179,6 @@ load_new_data()
 
 # MAGIC %sql
 # MAGIC SELECT * FROM 01_gold_daily_customer_books
-
-# COMMAND ----------
-
-load_new_data()
 
 # COMMAND ----------
 

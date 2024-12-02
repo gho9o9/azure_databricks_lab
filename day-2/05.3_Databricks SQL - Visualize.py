@@ -6,7 +6,7 @@
 # MAGIC </br><img src="images/05.3.1.png" width="600" />
 # MAGIC </br><img src="images/05.3.2.png" width="600" />
 # MAGIC 1. Azure Entra ID 認証を行ったのち Databricks へ接続します。
-# MAGIC </br><img src="images/05.3.3.png" width="600" />
+# MAGIC </br><img src="images/05.3.3.png" width="300" />
 # MAGIC 1. スキーマの一覧から `05_gold_nyctaxi` を選択します。
 # MAGIC </br><img src="images/05.3.4.png" width="600" />
 # MAGIC 1. 下記を例に Power BI デスクトップ を利用しデータセットを可視化します。
@@ -37,7 +37,7 @@
 # MAGIC 1. 公開先のテナントに接続します。
 # MAGIC </br><img src="images/05.3.11.png" width="600" />
 # MAGIC 1. この操作には管理者アカウントによる承認が必要です。
-# MAGIC </br><img src="images/05.3.12.png" width="600" />
+# MAGIC </br><img src="images/05.3.12.png" width="200" />
 # MAGIC 1. 公開先のワークスペースを選択し `Power BI に接続` を押下します。
 # MAGIC </br><img src="images/05.3.13.png" width="600" />
 # MAGIC 1. 正常に公開されたのち `Power BI を開く` を押下します。
@@ -48,3 +48,7 @@
 # MAGIC </br><img src="images/05.3.16.png" width="600" />
 # MAGIC 1. 連携されたデータをもとにレポートが自動作成されます。
 # MAGIC </br><img src="images/05.3.17.png" width="600" />
+# MAGIC
+# MAGIC #### 参考
+# MAGIC  - [Announcing General Availability: Publish to Microsoft Power BI Service from Unity Catalog](https://www.databricks.com/blog/announcing-general-availability-publish-microsoft-power-bi-service-unity-catalog)
+# MAGIC   - [Publish to Power BI Online from Azure Databricks](https://learn.microsoft.com/en-us/azure/databricks/partners/bi/power-bi#publish)
