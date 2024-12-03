@@ -10,6 +10,7 @@
 # MAGIC 1. スキーマの一覧から `05_gold_nyctaxi` を選択します。
 # MAGIC </br><img src="images/05.3.4.png" width="600" />
 # MAGIC 1. 下記を例に Power BI デスクトップ を利用しデータセットを可視化します。
+# MAGIC </br><img src="images/05.3.18.png" width="600" />
 # MAGIC </br><img src="images/05.3.5.png" width="600" />
 
 # COMMAND ----------
