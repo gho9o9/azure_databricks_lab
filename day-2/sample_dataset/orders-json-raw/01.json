@@ -1,4 +1,4 @@
-{"order_id":"000000000006341","order_timestamp":1657520256,"customer_id":"C00788","quantity":1,"total":41,"books":[{"book_id":"B08","quantity":1,"subtotal":41}]}
+{"order_id":null,"order_timestamp":1657520256,"customer_id":"C00788","quantity":1,"total":41,"books":[{"book_id":"B08","quantity":1,"subtotal":41}]}
 {"order_id":"000000000006342","order_timestamp":1657520256,"customer_id":"C00788","quantity":1,"total":41,"books":[{"book_id":"B08","quantity":1,"subtotal":41}]}
 {"order_id":"000000000006343","order_timestamp":1657531717,"customer_id":"C00654","quantity":1,"total":28,"books":[{"book_id":"B02","quantity":1,"subtotal":28}]}
 {"order_id":"000000000006344","order_timestamp":1657531717,"customer_id":"C00654","quantity":1,"total":28,"books":[{"book_id":"B02","quantity":1,"subtotal":28}]}
