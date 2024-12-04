@@ -13,60 +13,77 @@
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC
--- MAGIC
--- MAGIC
--- MAGIC ## Bronze Layer Tables
-
--- COMMAND ----------
-
-CREATE OR REFRESH STREAMING LIVE TABLE 03_bronze_books
-COMMENT "The raw books data, ingested from CDC feed"
-AS SELECT * FROM cloud_files("${sample.dataset}/books-cdc", "json")
+-- MAGIC ## 1. Bronze Table
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC
--- MAGIC
--- MAGIC
--- MAGIC ## Silver Layer Tables
+-- MAGIC #### 03_bronze_books
 
 -- COMMAND ----------
 
-CREATE OR REFRESH STREAMING LIVE TABLE 03_silver_books (
-  CONSTRAINT valid_book_number EXPECT (book_id IS NOT NULL) ON VIOLATION DROP ROW
+CREATE OR REFRESH STREAMING LIVE TABLE 03_bronze_books -- ストリーム Read（増分取り込みを宣言）
+COMMENT "The raw books data, ingested from CDC feed" -- コメント
+AS SELECT * FROM cloud_files( -- Auto Loader 利用宣言（増分識別の機能有効化）
+                             "${sample.dataset}/books-cdc", -- 入力元
+                             "json") -- Foramat 指定
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ## 2. Silver Table
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC #### 03_silver_books
+
+-- COMMAND ----------
+
+CREATE OR REFRESH STREAMING LIVE TABLE 03_silver_books ( -- ストリーム Read（増分取り込みを宣言）
+  CONSTRAINT valid_book_number EXPECT (book_id IS NOT NULL) ON VIOLATION DROP ROW -- 品質制約定義
 );
-APPLY CHANGES INTO LIVE.03_silver_books
-  FROM STREAM(LIVE.03_bronze_books)
-  KEYS (book_id)
-  APPLY AS DELETE WHEN row_status = "DELETE"
-  SEQUENCE BY row_time
-  COLUMNS * EXCEPT (row_status, row_time)
+-- CDF テーブルの増分データに対してロジックで差分処理を判定しターゲットテーブルを更新
+APPLY CHANGES INTO LIVE.03_silver_books -- ターゲットテーブル
+  FROM STREAM(LIVE.03_bronze_books) -- CDF テーブル
+  KEYS (book_id) -- 比較キー
+  APPLY AS DELETE WHEN row_status = "DELETE"  -- 増分データの条件に応じたターゲットへの振る舞いを定義
+  SEQUENCE BY row_time -- トランザクションの順番判定キー
+  COLUMNS * EXCEPT (row_status, row_time) -- ターゲットへ出力する列の指定（* EXCEPT で出力しない列指定も可能）
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC
--- MAGIC
--- MAGIC ## Gold Layer Tables
+-- MAGIC ## 3. Gold Table
 
 -- COMMAND ----------
 
-CREATE LIVE TABLE 03_gold_author_counts_state
-  COMMENT "Number of books per author"
-AS SELECT author, count(*) as books_count, current_timestamp() updated_time
+-- MAGIC %md
+-- MAGIC #### 03_gold_author_counts_state
+
+-- COMMAND ----------
+
+CREATE LIVE TABLE 03_gold_author_counts_state -- マテリアライズドビュー（毎回洗い替え）
+  COMMENT "Number of books per author" -- コメント
+AS
+  -- Books Gold テーブル用のデータ加工（分析用の集計処理）
+   SELECT author, count(*) as books_count, current_timestamp() updated_time
   FROM LIVE.03_silver_books
   GROUP BY author
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ## DLT Views
+-- MAGIC ## Option. DLT View
 
 -- COMMAND ----------
 
-CREATE LIVE VIEW 03_books_sales_tmp
+-- MAGIC %md
+-- MAGIC #### 03_books_sales_tmp
+
+-- COMMAND ----------
+
+CREATE LIVE VIEW 03_books_sales_tmp  -- 通常ビュー
   AS SELECT b.title, o.quantity
     FROM (
       SELECT *, explode(books) AS book 

@@ -30,7 +30,17 @@
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## 新しい Raw データの到着を疑似
+
+# COMMAND ----------
+
 load_new_json_data()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Debug 用：Raw データの確認
 
 # COMMAND ----------
 

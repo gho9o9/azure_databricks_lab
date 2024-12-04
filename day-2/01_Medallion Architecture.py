@@ -42,7 +42,7 @@ display(df.limit(10))
     .format("cloudFiles") # Auto Loader 利用宣言（増分識別の機能有効化）
     .option("cloudFiles.format", "parquet") # Foramat 指定
     .option("cloudFiles.schemaLocation", f"{sample_dataset}/checkpoints/orders_raw") # スキーマ推論の有効化
-    .load(f"{sample_dataset}/orders-raw") # Bronze の入力元
+    .load(f"{sample_dataset}/orders-raw") # 入力元
     .createOrReplaceTempView("01_raw_orders_temp")) # 一時ビュー作成（SQL による Raw データ加工用）
 
 # COMMAND ----------
@@ -131,7 +131,7 @@ load_new_data()
 
 # COMMAND ----------
 
-(spark.read
+(spark.read # 通常 Read（全件読み取り）
       .format("json") # フォーマット指定
       .load(f"{sample_dataset}/customers-json") # 入力元
       .createOrReplaceTempView("01_lookup_customers")) # 一時ビュー作成
@@ -208,7 +208,7 @@ load_new_data()
 # .format("cloudFiles") # Auto Loader 利用宣言（増分識別の機能有効化）
 # .option("cloudFiles.format", "parquet") # Foramat 指定
 # .option("cloudFiles.schemaLocation", f"{sample_dataset}/checkpoints/orders_raw") # スキーマ推論の有効化
-  .table("01_silver_orders") # Gold の入力元
+  .table("01_silver_orders") # 入力元
   .createOrReplaceTempView("01_silver_orders_tmp")) # 一時ビュー作成
 
 # COMMAND ----------

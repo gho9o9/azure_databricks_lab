@@ -1,11 +1,4 @@
 -- Databricks notebook source
--- MAGIC %md
--- MAGIC
--- MAGIC
--- MAGIC # Delta Live Tables
-
--- COMMAND ----------
-
 -- MAGIC %md-sandbox
 -- MAGIC
 -- MAGIC <div  style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -41,48 +34,56 @@
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC ## Bronze Layer Tables
+-- MAGIC ## 1. Bronze Table
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC #### orders_raw
+-- MAGIC #### 02_bronze_orders
+-- MAGIC Raw データに対して Auot Loader で増分読み取り
 
 -- COMMAND ----------
 
-CREATE OR REFRESH STREAMING LIVE TABLE 02_bronze_orders
-COMMENT "The raw books orders, ingested from orders-raw"
-AS SELECT * FROM cloud_files("${sample.dataset}/orders-json-raw", "json",
-                             map("cloudFiles.inferColumnTypes", "true"))
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC #### customers
-
--- COMMAND ----------
-
-CREATE OR REFRESH LIVE TABLE 02_lookup_customers
-COMMENT "The customers lookup table, ingested from customers-json"
-AS SELECT * FROM json.`${sample.dataset}/customers-json`
+CREATE OR REFRESH STREAMING LIVE TABLE 02_bronze_orders -- ストリームテーブル（増分取り込みテーブル）
+COMMENT "The raw books orders, ingested from orders-raw" -- コメント
+AS SELECT * FROM cloud_files( -- Auto Loader 利用宣言（増分識別の機能有効化）
+                             "${sample.dataset}/orders-json-raw", -- 入力元
+                             "json", -- Foramat 指定
+                             map("cloudFiles.inferColumnTypes", "true")) -- スキーマ推論の有効化
 
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC
--- MAGIC
--- MAGIC
--- MAGIC ## Silver Layer Tables
--- MAGIC
--- MAGIC #### orders_cleaned
+-- MAGIC #### 02_lookup_customers
 
 -- COMMAND ----------
 
-CREATE OR REFRESH STREAMING LIVE TABLE 02_silver_orders (
-  CONSTRAINT valid_order_number EXPECT (order_id IS NOT NULL) ON VIOLATION DROP ROW
+CREATE OR REFRESH LIVE TABLE 02_lookup_customers -- マテリアライズドビュー（毎回洗い替え）
+COMMENT "The customers lookup table, ingested from customers-json" -- コメント
+AS SELECT * FROM json.`${sample.dataset}/customers-json` -- 入力元
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC
+-- MAGIC
+-- MAGIC
+-- MAGIC ## 2. Silver Table
+-- MAGIC Raw データの読み取りと比較し、入力元が Delta テーブルであるため、Auto Loader 利用宣言（増分識別の機能有効化）や スキーマ推論の有効化 は不要
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC #### 02_silver_orders
+
+-- COMMAND ----------
+
+CREATE OR REFRESH STREAMING LIVE TABLE 02_silver_orders ( -- ストリーム Read（増分取り込みを宣言）
+  CONSTRAINT valid_order_number EXPECT (order_id IS NOT NULL) ON VIOLATION DROP ROW -- 品質制約定義
 )
-COMMENT "The cleaned books orders with valid order_id"
+COMMENT "The cleaned books orders with valid order_id" -- コメント
 AS
+  -- Orders Silver テーブル用のデータ加工（Orders Bronze ストリーム と Customers 静的マスターテーブルとの結合）
   SELECT order_id, quantity, o.customer_id, c.profile:first_name as f_name, c.profile:last_name as l_name,
          cast(from_unixtime(order_timestamp, 'yyyy-MM-dd HH:mm:ss') AS timestamp) order_timestamp, o.books,
          c.profile:address:country as country
@@ -106,13 +107,20 @@ AS
 -- MAGIC %md
 -- MAGIC
 -- MAGIC
--- MAGIC ## Gold Tables
+-- MAGIC ## 3. Gold Table
+-- MAGIC Raw データの読み取りと比較し、入力元が Delta テーブルであるため、Auto Loader 利用宣言（増分識別の機能有効化）や スキーマ推論の有効化 は不要
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE 02_gold_cn_daily_customer_books
-COMMENT "Daily number of books per customer in China"
+-- MAGIC %md
+-- MAGIC #### 02_gold_cn_daily_customer_books
+
+-- COMMAND ----------
+
+CREATE OR REFRESH LIVE TABLE 02_gold_cn_daily_customer_books -- マテリアライズドビュー（毎回洗い替え）
+COMMENT "Daily number of books per customer in China" -- コメント
 AS
+  -- Orders Gold テーブル用のデータ加工（分析用の集計処理）
   SELECT customer_id, f_name, l_name, date_trunc("DD", order_timestamp) order_date, sum(quantity) books_counts
   FROM LIVE.02_silver_orders
   WHERE country = "China"
@@ -120,9 +128,15 @@ AS
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE 02_gold_fr_daily_customer_books
-COMMENT "Daily number of books per customer in France"
+-- MAGIC %md
+-- MAGIC #### 02_gold_fr_daily_customer_books
+
+-- COMMAND ----------
+
+CREATE OR REFRESH LIVE TABLE 02_gold_fr_daily_customer_books -- マテリアライズドビュー（毎回洗い替え）
+COMMENT "Daily number of books per customer in France" -- コメント
 AS
+  -- Orders Gold テーブル用のデータ加工（分析用の集計処理）
   SELECT customer_id, f_name, l_name, date_trunc("DD", order_timestamp) order_date, sum(quantity) books_counts
   FROM LIVE.02_silver_orders
   WHERE country = "France"
