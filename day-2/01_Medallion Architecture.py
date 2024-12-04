@@ -12,8 +12,13 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## 1. Orders Bronze Table の作成
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC
-# MAGIC ## Exploring The Source Directory
+# MAGIC #### Orders Raw データを確認
 
 # COMMAND ----------
 
@@ -22,56 +27,67 @@ display(files)
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC
-# MAGIC ## Auto Loader
-
-# COMMAND ----------
-
-(spark.readStream
-    .format("cloudFiles")
-    .option("cloudFiles.format", "parquet")
-    .option("cloudFiles.schemaLocation", f"{sample_dataset}/checkpoints/orders_raw")
-    .load(f"{sample_dataset}/orders-raw")
-    .createOrReplaceTempView("01_raw_orders_temp"))
+df = spark.read.parquet(f"{sample_dataset}/orders-raw")
+display(df.limit(10))
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC
-# MAGIC ## Enriching Raw Data
+# MAGIC #### Auto Loader による Orders Raw データの 読み取り
+
+# COMMAND ----------
+
+(spark.readStream # ストリーム Read（増分取り込みを宣言）
+    .format("cloudFiles") # Auto Loader 利用宣言（増分識別の機能有効化）
+    .option("cloudFiles.format", "parquet") # Foramat 指定
+    .option("cloudFiles.schemaLocation", f"{sample_dataset}/checkpoints/orders_raw") # スキーマ推論の有効化
+    .load(f"{sample_dataset}/orders-raw") # Bronze の入力元
+    .createOrReplaceTempView("01_raw_orders_temp")) # 一時ビュー作成（SQL による Raw データ加工用）
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC
+# MAGIC #### Orders Bronze テーブル用のデータ加工（メタデータ付与）
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC CREATE OR REPLACE TEMPORARY VIEW 01_raw_orders AS (
-# MAGIC   SELECT *, current_timestamp() arrival_time, input_file_name() source_file
+# MAGIC   SELECT *, 
+# MAGIC     current_timestamp() arrival_time, 
+# MAGIC     input_file_name() source_file
 # MAGIC   FROM 01_raw_orders_temp
 # MAGIC )
+# MAGIC -- https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.functions.input_file_name.html
 
 # COMMAND ----------
 
 # MAGIC %sql
+# MAGIC -- ストリーム読み取り中のテーブルに対する読み取り
 # MAGIC SELECT * FROM 01_raw_orders
 
 # COMMAND ----------
 
 # MAGIC %sql
+# MAGIC -- ストリーム読み取り中のテーブルに対する読み取り
 # MAGIC SELECT count(*) FROM 01_raw_orders
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Creating Bronze Table
+# MAGIC #### Orders Bronze Table への書き込み
 
 # COMMAND ----------
 
-(spark.table("01_raw_orders")
-      .writeStream
-      .format("delta")
-      .option("checkpointLocation", f"{sample_dataset}/checkpoints/orders_bronze")
-      .outputMode("append")
-      .table("01_bronze_orders"))
+(spark.table("01_raw_orders") # Bronze の入力元
+      .writeStream # ストリーム読み取り中のデータ（読み取った増分データ）の出力を指示
+      .format("delta") # 出力フォーマット
+      .option("checkpointLocation", f"{sample_dataset}/checkpoints/orders_bronze") # 増分に対する Exactly-Once Ingest 保証のためのチェックポイント格納先
+      .outputMode("append") # 読み取った増分データを追記することを指示
+#     .trigger(processingTime='500 milliseconds' # 500 ms ごとの再実行を繰り返す（既定値）
+      .table("01_bronze_orders")) # 出力先
 
 # COMMAND ----------
 
@@ -80,20 +96,45 @@ display(files)
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC #### テスト：新しい Orders Raw データの到着を疑似し上のストリームやマテリアライズドビューがどのように変化するか確認
+
+# COMMAND ----------
+
 load_new_data()
 
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## 2. Orders Silver Table の作成
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### Orders Bronze テーブルの読み取り
+# MAGIC Raw データの読み取りと比較し、入力元が Delta テーブルであるため、Auto Loader 利用宣言（増分識別の機能有効化）や スキーマ推論の有効化 は不要
+
+# COMMAND ----------
+
+(spark.readStream # ストリーム Read（増分取り込みを宣言）
+# .format("cloudFiles") # Auto Loader 利用宣言（増分識別の機能有効化）
+# .option("cloudFiles.format", "parquet") # Foramat 指定
+# .option("cloudFiles.schemaLocation", f"{sample_dataset}/checkpoints/orders_raw") # スキーマ推論の有効化
+  .table("01_bronze_orders") # Silver の入力元
+  .createOrReplaceTempView("01_bronze_orders_tmp")) # 一時ビュー作成
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC
-# MAGIC #### Creating Static Lookup Table
+# MAGIC #### Customers マスターテーブルの読み取り
 
 # COMMAND ----------
 
 (spark.read
-      .format("json")
-      .load(f"{sample_dataset}/customers-json")
-      .createOrReplaceTempView("01_lookup_customers"))
+      .format("json") # フォーマット指定
+      .load(f"{sample_dataset}/customers-json") # 入力元
+      .createOrReplaceTempView("01_lookup_customers")) # 一時ビュー作成
 
 # COMMAND ----------
 
@@ -103,13 +144,7 @@ load_new_data()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Creating Silver Table
-
-# COMMAND ----------
-
-(spark.readStream
-  .table("01_bronze_orders")
-  .createOrReplaceTempView("01_bronze_orders_tmp"))
+# MAGIC #### Orders Silver テーブル用のデータ加工（Orders Bronze ストリーム と Customers 静的マスターテーブルとの結合）
 
 # COMMAND ----------
 
@@ -124,12 +159,18 @@ load_new_data()
 
 # COMMAND ----------
 
-(spark.table("01_enriched_orders_tmp")
-      .writeStream
-      .format("delta")
-      .option("checkpointLocation", f"{sample_dataset}/checkpoints/orders_silver")
-      .outputMode("append")
-      .table("01_silver_orders"))
+# MAGIC %md
+# MAGIC #### Orders Silver テーブルへの書き込み
+
+# COMMAND ----------
+
+(spark.table("01_enriched_orders_tmp") # Silver の入力元
+      .writeStream # ストリーム読み取り中のデータ（読み取った増分データ）の出力を指示
+      .format("delta") # 出力フォーマット
+      .option("checkpointLocation", f"{sample_dataset}/checkpoints/orders_silver") # 増分に対する Exactly-Once Ingest 保証のためのチェックポイント格納先
+      .outputMode("append") # 読み取った増分データを追記することを指示
+#     .trigger(processingTime='500 milliseconds' # 500 ms ごとの再実行を繰り返す（既定値）
+      .table("01_silver_orders")) # 出力先
 
 # COMMAND ----------
 
@@ -143,18 +184,37 @@ load_new_data()
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC #### テスト：新しい Orders Raw データの到着を疑似し上のストリームやマテリアライズドビューがどのように変化するか確認
+
+# COMMAND ----------
+
 load_new_data()
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Creating Gold Table
+# MAGIC ## 3. Orders Gold Table の作成
 
 # COMMAND ----------
 
-(spark.readStream
-  .table("01_silver_orders")
-  .createOrReplaceTempView("01_silver_orders_tmp"))
+# MAGIC %md
+# MAGIC #### Orders Silver テーブルの読み取り
+# MAGIC Raw データの読み取りと比較し、入力元が Delta テーブルであるため、Auto Loader 利用宣言（増分識別の機能有効化）や スキーマ推論の有効化 は不要
+
+# COMMAND ----------
+
+(spark.readStream # ストリーム Read（増分取り込みを宣言）
+# .format("cloudFiles") # Auto Loader 利用宣言（増分識別の機能有効化）
+# .option("cloudFiles.format", "parquet") # Foramat 指定
+# .option("cloudFiles.schemaLocation", f"{sample_dataset}/checkpoints/orders_raw") # スキーマ推論の有効化
+  .table("01_silver_orders") # Gold の入力元
+  .createOrReplaceTempView("01_silver_orders_tmp")) # 一時ビュー作成
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #### Orders Gold テーブル用のデータ加工（分析用の集計処理）
 
 # COMMAND ----------
 
@@ -167,13 +227,20 @@ load_new_data()
 
 # COMMAND ----------
 
-(spark.table("01_gold_daily_customer_books_tmp")
-      .writeStream
-      .format("delta")
-      .outputMode("complete")
-      .option("checkpointLocation", f"{sample_dataset}/checkpoints/daily_customer_books_gold")
-      .trigger(availableNow=True)
-      .table("01_gold_daily_customer_books"))
+# MAGIC %md
+# MAGIC #### Orders Gold テーブルへの書き込み
+# MAGIC **outputMode("complete")** ： Bronze や Silver とは異なり Gold は集計処理のため追記ではなく全件を洗い替え（上書き）する  
+# MAGIC **.trigger(availableNow=True)** : 増分読み取りを加味した再集計が完了したら処理を終了（既定は `.trigger(processingTime='500 milliseconds'`) で 500ms ごとの再実行を繰り返す）
+
+# COMMAND ----------
+
+(spark.table("01_gold_daily_customer_books_tmp") # Gold の入力元
+      .writeStream # ストリーム読み取り中のデータ（読み取った増分データ）の出力を指示
+      .format("delta") # 出力フォーマット
+      .outputMode("complete") # 洗い替え指定（Bronze や Silver とは異なり Gold は集計処理のため追記ではなく全件上書き）
+      .option("checkpointLocation", f"{sample_dataset}/checkpoints/daily_customer_books_gold") # 増分に対する Exactly-Once Ingest 保証のためのチェックポイント格納先
+      .trigger(availableNow=True) # 増分読み取りが完了したら処理を終了（既定は処理を継続し新着入力をポーリング）
+      .table("01_gold_daily_customer_books")) # 出力先
 
 # COMMAND ----------
 
