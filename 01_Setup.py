@@ -5,8 +5,9 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC 必要に応じて表示言語（既定：English）を変更します。  
+# MAGIC </br><img src="images/setup.1.png" width="600"/>  
 # MAGIC Settings から任意の言語（例：日本語）を選択してください。
-# MAGIC </br><img src="images/setup.1.png" width="600"/>
 
 # COMMAND ----------
 
@@ -17,51 +18,52 @@
 
 # MAGIC %md
 # MAGIC #### ハンズオンコンテンツのダウンロード
+# MAGIC [GitHub リポジトリ](https://github.com/gho9o9/adb-handson)からハンズオンコンテンツをダウンロードします。  
+# MAGIC </br><img src="images/setup.2.png" width="600"/>  
+# MAGIC </br><img src="images/setup.3.png" width="600"/>  
+# MAGIC `Git リポジトリの URL`に `https://github.com/gho9o9/adb-handson.git` を指定します。  
+# MAGIC </br><img src="images/setup.4.png" width="600"/>  
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC #### 任意：ハンズオンコンテンツの最新化
-# MAGIC [リポジトリ](https://github.com/gho9o9/adb-handson) から最新版を入手（PULL）してください。
-# MAGIC </br><img src="images/readme.6.png" width="600"/>
-# MAGIC </br><img src="images/readme.7.png" width="600"/>
-# MAGIC </br><img src="images/readme.8.png" width="600"/>
+# MAGIC 既にクローン済みのリポジトリから最新のコンテンツをダウンロードする場合は PULL を行います。  
+# MAGIC </br><img src="images/setup.5.png" width="600"/>  
+# MAGIC </br><img src="images/setup.6.png" width="600"/>  
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC #### ハンズオンコンテンツの環境設定
+# MAGIC ハンズオンの環境設定を行います。  
+# MAGIC </br><img src="images/setup.7.png" width="600"/>  
+# MAGIC `includeフォルダ`内の`handson.h ノートブック`を開きます。  
+# MAGIC </br><img src="images/setup.8.png" width="600"/>  
+# MAGIC ノートブック冒頭のセル内で定義された変数（`your_catalog`と`your_schema`）の値を講師に指示に従い編集します。ここではセルを実行する必要はありません。  
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 3. Databricks クラスタの準備
+# MAGIC ## 3. サンプルデータのセットアップ
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### Databricks クラスタ
-# MAGIC 本ハンズオンでは以下のクラスタを作成します。
-# MAGIC - 汎用クラスタ（Runtime 13.3 LTS 以上）
-# MAGIC - ジョブクラスタ（ラボの過程で自動作成されます）
-# MAGIC - SQL ウェアハウス
-# MAGIC </br><img src="images/readme.9.png" width="600"/>
-# MAGIC </br><img src="images/readme.10.png" width="600"/>
+# MAGIC #### クラスターのアタッチ
+# MAGIC サンプルデータのセットアップはノートブックの実行を伴うためクラスターをアタッチします。  
+# MAGIC </br><img src="images/setup.9.png" width="600"/>  
+# MAGIC このノートブックの右肩にあるクラスターリストから`サーバーレス`を選択します。`サーバーレス`が選択肢に無い場合は講師の指示に従います（汎用クラスタを別途作成してアタッチします）。
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 4. サンプルデータのセットアップ
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC #### クラスタのアタッチ
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC #### ハンズオン環境用おまじない
+# MAGIC #### ハンズオン用おまじない処理
+# MAGIC ハンズオンのコンテンツを実行する場合に共通して事前実行するノートブックを呼び出します。
+# MAGIC - `%run` によってノートブック内で別のノートブックをインラインで呼び出すことができます。
+# MAGIC   - [Databricks ノートブックを別のノートブックから実行する](https://learn.microsoft.com/ja-jp/azure/databricks/notebooks/notebook-workflows)
+# MAGIC - handson.h ノートブック内でハンズオンのコンテンツで使用するリソース（変数や関数）を定義しています。
 
 # COMMAND ----------
 
