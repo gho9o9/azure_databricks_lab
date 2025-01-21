@@ -4,11 +4,11 @@
 # MAGIC
 # MAGIC 1. サイドバーの **SQL エディタ** をクリックします。
 # MAGIC 1. エディタ中央上部のコンテキストメニュからラボで利用している `カタログ` と `スキーマ` を選択します。
-# MAGIC </br><img src="images/05.2.1.png" width="400"/>
+# MAGIC </br><img src="../images/05.2.1.png" width="400"/>
 # MAGIC 1. 以下のコードをエディタ内に張り付けステートメントごとに SQL を実行し動作を確認してください。
-# MAGIC </br><img src="images/05.2.2.png" width="400"/>
+# MAGIC </br><img src="../images/05.2.2.png" width="400"/>
 # MAGIC 1. サイドバーの **SQL カタログ** をクリックしラボで作成したテーブル（`05_silver_nyctaxi`、`05_gold_nyctaxi`）が作成されていることを確認します。
-# MAGIC </br><img src="images/05.2.3.png" width="400"/>
+# MAGIC </br><img src="../images/05.2.3.png" width="400"/>
 
 # COMMAND ----------
 
