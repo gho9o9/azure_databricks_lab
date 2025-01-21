@@ -20,4 +20,22 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## クラスターのアタッチ
+# MAGIC ## 汎用クラスターのアタッチ
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 処理の実行に必要なクラスターをアタッチします。  
+# MAGIC </br><img src="../images/basis.3.png" width="600"/>  
+# MAGIC ノートブックの右肩にあるクラスターリストから準備したクラスターを選択します。  
+# MAGIC ※. 停止しているプロビジョニング汎用コンピューティングを選択した場合はそのタイミングで起動が開始されます。  
+# MAGIC
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## セルの実行
+
+# COMMAND ----------
+
+print("Hello Databricks")
