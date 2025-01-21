@@ -1,29 +1,23 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC ## 1. 言語設定
+# MAGIC ## 汎用クラスターの準備
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### Orders Raw データを確認
+# MAGIC ハンズオンコンテンツ（ノートブック）の実行に必要な汎用クラスターを準備します。デプロイモデル(プロビジョニング or サーバレス)は不問です。
+# MAGIC
+# MAGIC - プロビジョニング  
+# MAGIC </br><img src="../images/basis.1.png" width="600"/>  
+# MAGIC </br><img src="../images/basis.2.png" width="600"/>  
+# MAGIC プロビジョニング汎用コンピューティングを利用する場合は `Databricks Runtime のバージョン` を `Runtime: 13.3 LTS` 以上を指定してください。  
+# MAGIC またコストの観点からもハンズオンコンテンツの実行においては低スペックな`ノードタイプ（例：Standard_D4ads_v5）` かつ `シングルノード` で十分です。  
+# MAGIC
+# MAGIC - サーバレス  
+# MAGIC サーバレス汎用コンピューティングを利用する場合は明示的なデプロイは不要です。
+# MAGIC
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 2. ハンズオンコンテンツのダウンロード
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 3. Databricks 汎用クラスタの作成
-# MAGIC 本ハンズオンでは以下のクラスタを作成します。
-# MAGIC - 汎用クラスタ（Runtime 13.3 LTS 以上）
-# MAGIC - ジョブクラスタ（ラボの過程で自動作成されます）
-# MAGIC - SQL ウェアハウス
-# MAGIC </br><img src="images/readme.9.png" width="600"/>
-# MAGIC </br><img src="images/readme.10.png" width="600"/>
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 4. サンプルデータのセットアップ
+# MAGIC ## クラスターのアタッチ

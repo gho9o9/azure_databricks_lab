@@ -1,5 +1,10 @@
 # Databricks notebook source
 # MAGIC %md
+# MAGIC # ハンズオン事前準備
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## 1. 表示言語の設定
 
 # COMMAND ----------
@@ -82,12 +87,25 @@ spark.sql(f"""CREATE VOLUME IF NOT EXISTS {your_volume}""")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### Volume へのアップロード（マニュアル操作）
-# MAGIC 1. `sample_dataset` フォルダのハンバーガーメニュー（`︙`）を選択して、 `エクスポート` -> `ソースファイル` をクリックしてデータファイルをダウンロードします。
-# MAGIC 1. ダウンロードした Zip ファイルを解凍します。
-# MAGIC 1. ノートブックの左型タブにある`Catalog (Ctrl + Alt + C)`を選択したのち、`sample_dataset_volume` ボリュームのハンバーガーメニュー（`︙`）から`ボリュームへのアップロード`を選択します。
-# MAGIC </br><img src="images/00.2.1.png" width="600"/>
-# MAGIC 1. 表示されたウィンドウに解凍した `sample_dataset` フォルダ配下のすべてのフォルダ（全7フォルダ）をドロップし`アップロード`を押下します。
-# MAGIC </br><img src="images/00.2.2.png" width="600"/>
-# MAGIC </br><img src="images/00.2.3.png" width="600"/>
-# MAGIC </br><img src="images/00.2.4.png" width="600"/>
+# MAGIC #### Volume へのアップロード
+# MAGIC サンプルデータを Volume へマニュアル操作でアップロードします。  
+# MAGIC </br><img src="images/setup.10.png" width="600"/>  
+# MAGIC `sample_dataset フォルダ`のハンバーガーメニュー（`︙`）を選択し`エクスポート` -> `ソースファイル` をクリックしダウンロードされた Zip ファイルを解凍しておきます。  
+# MAGIC
+# MAGIC </br><img src="images/00.2.1.png" width="600"/>  
+# MAGIC ノートブックの左型タブにある`Catalog (Ctrl + Alt + C)`から`sample_dataset_volume ボリューム`を展開しハンバーガーメニュー（`︙`）の`ボリュームへのアップロード`を選択します。  
+# MAGIC
+# MAGIC </br><img src="images/00.2.2.png" width="600"/>  
+# MAGIC </br><img src="images/00.2.3.png" width="600"/>  
+# MAGIC 表示されたウィンドウに解凍した `sample_dataset` フォルダ配下のすべてのフォルダ（全7フォルダ）をドロップし`アップロード`を押下します。  
+# MAGIC
+# MAGIC </br><img src="images/00.2.4.png" width="600"/>  
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 以上で準備完了です。
+# MAGIC
+# MAGIC Next Action:
+# MAGIC - <a href="$./day-1">Day-1 のハンズオンはこちら</a>
+# MAGIC - <a href="$./day-2">Day-2 のハンズオンはこちら</a>

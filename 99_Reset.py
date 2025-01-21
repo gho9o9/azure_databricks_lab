@@ -1,5 +1,15 @@
 # Databricks notebook source
-# MAGIC %run ./00.1_Set_Environment
+# MAGIC %md
+# MAGIC # ハンズオン環境の初期化
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ハンズオン環境の初期化としてユーザー固有のスキーマーを削除します。
+
+# COMMAND ----------
+
+# MAGIC %run ./include/handson.h
 
 # COMMAND ----------
 
@@ -10,3 +20,8 @@ display(files)
 
 spark.sql(f"DROP SCHEMA IF EXISTS {your_catalog}.{your_schema} CASCADE")
 #dbutils.fs.rm(f"{sample_dataset}", True)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ハンズオン環境の初期化完了です。あらためてハンズオンを行う場合は `01_Setup` の `3. サンプルデータのセットアップ` から始めてください。
