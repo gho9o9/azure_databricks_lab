@@ -2,7 +2,7 @@
 # 環境固有パラメータ定義
 
 your_catalog = "o9o9dbw" # 講師から提示されるカタログ名を入力してください
-your_schema = "handson_tico" # 参加者全体で一意となるようあなたに固有の識別子をアルファベットで入力してください
+your_schema = "handson_tico_demo01" # 参加者全体で一意となるようあなたに固有の識別子をアルファベットで入力してください
 
 # COMMAND ----------
 
@@ -10,14 +10,13 @@ your_schema = "handson_tico" # 参加者全体で一意となるようあなた�
 
 your_volume = "sample_dataset_volume"
 volume_path = "/Volumes/" + your_catalog + "/" + your_schema + "/" + your_volume
-sample_dataset = volume_path
+sample_dataset_path = volume_path
 # spark.conf.set(f"sample.dataset", sample_dataset) # for SQL Context。spark.conf.set はサーバレス未サポート
-print("sample_dataset = " + sample_dataset)
+print("sample_dataset_path = " + sample_dataset_path)
 
 # COMMAND ----------
 
 # 参加者固有スキーマ作成 ＆ コンテキスト設定
-
 spark.sql(f"USE CATALOG {your_catalog}")
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {your_catalog}.{your_schema}")
 spark.sql(f"USE DATABASE {your_schema}")
@@ -35,8 +34,8 @@ def get_index(dir):
     return index+1
 
 # Structured Streaming
-streaming_dir = f"{sample_dataset}/orders-streaming"
-raw_dir = f"{sample_dataset}/orders-raw"
+streaming_dir = f"{sample_dataset_path}/orders-streaming"
+raw_dir = f"{sample_dataset_path}/orders-raw"
 
 def load_file(current_index):
     latest_file = f"{str(current_index).zfill(2)}.parquet"
@@ -58,11 +57,11 @@ def load_new_data(all=False):
         index += 1
 
 # DLT
-streaming_orders_dir = f"{sample_dataset}/orders-json-streaming"
-streaming_books_dir = f"{sample_dataset}/books-streaming"
+streaming_orders_dir = f"{sample_dataset_path}/orders-json-streaming"
+streaming_books_dir = f"{sample_dataset_path}/books-streaming"
 
-raw_orders_dir = f"{sample_dataset}/orders-json-raw"
-raw_books_dir = f"{sample_dataset}/books-cdc"
+raw_orders_dir = f"{sample_dataset_path}/orders-json-raw"
+raw_books_dir = f"{sample_dataset_path}/books-cdc"
 
 def load_json_file(current_index):
     latest_file = f"{str(current_index).zfill(2)}.json"
@@ -84,3 +83,7 @@ def load_new_json_data(all=False):
     else:
         load_json_file(index)
         index += 1
+
+# COMMAND ----------
+
+print("Preparation is successfully completed!")
