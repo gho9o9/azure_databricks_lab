@@ -380,3 +380,72 @@ print(hello("databricks"))
 # MAGIC
 # MAGIC #### 参考
 # MAGIC - [Databricks ノートブックのエクスポートとインポート](https://learn.microsoft.com/ja-jp/azure/databricks/notebooks/notebook-export-import)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### ノートブックの UI パラメータ
+# MAGIC パラメータを受け取る UI をノートブックに追加します。
+# MAGIC
+# MAGIC #### 参考
+# MAGIC - [Databricks ウィジェット](https://learn.microsoft.com/ja-jp/azure/databricks/notebooks/widgets)
+# MAGIC - [widgets ユーティリティ (dbutils.widgets)](https://learn.microsoft.com/ja-jp/azure/databricks/dev-tools/databricks-utils#dbutils-widgets)
+
+# COMMAND ----------
+
+# 下記のコード実行によりノートブックの上部にパラメータを指定する UI が追加されます。
+dbutils.widgets.dropdown("state", "CA", ["CA", "IL", "MI", "NY", "OR", "VA"])
+
+# COMMAND ----------
+
+dbutils.widgets.get("state")
+
+# COMMAND ----------
+
+dbutils.widgets.remove("state")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Jupyter Widgets（ipywidgets）を利用することでインタラクティブな実行をサポートすることもできます。
+# MAGIC #### 参考
+# MAGIC - [ipywidgets ウィジェット](https://learn.microsoft.com/ja-jp/azure/databricks/notebooks/ipywidgets)
+# MAGIC - [Jupyter Widgets（ipywidgets）](https://ipywidgets.readthedocs.io/en/stable/)
+
+# COMMAND ----------
+
+import ipywidgets as widgets
+from ipywidgets import interact
+
+# Load a dataset
+sparkDF = spark.read.csv("/databricks-datasets/bikeSharing/data-001/day.csv", header="true", inferSchema="true")
+
+# In this code, `(bins=(3, 10)` defines an integer slider widget that allows values between 3 and 10.
+@interact(bins=(3, 10))
+def plot_histogram(bins):
+  pdf = sparkDF.toPandas()
+  pdf.hist(column='temp', bins=bins)
+
+# COMMAND ----------
+
+import ipywidgets as widgets
+
+# Create button widget. Clicking this button loads a sampled dataframe from UC table.
+button = widgets.Button(description="Load dataframe sample")
+
+# Output widget to display the loaded dataframe
+output = widgets.Output()
+
+def load_sample_df(table_name):
+  return spark.sql(f"SELECT * FROM {table_name} LIMIT 1000")
+
+def on_button_clicked(_):
+    with output:
+      output.clear_output()
+      df = load_sample_df('samples.tpch.region')
+      print(df.toPandas())
+
+# Register the button's callback function to query UC and display results to the output widget
+button.on_click(on_button_clicked)
+
+display(button, output)
