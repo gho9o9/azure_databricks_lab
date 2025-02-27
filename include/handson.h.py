@@ -1,13 +1,18 @@
 # Databricks notebook source
 # 環境固有パラメータ定義
+your_identifier = "handson_tico_demo01" # 参加者全体で一意となるようあなたに固有の識別子をアルファベットで入力してください
+your_catalog = "o9o9dbw" # 講師から提示されるカタログ名を入力してください（このカタログは参加者全員で共有します）
+your_external_location = "o9o9stdbwcatalog" # 講師から提示される外部ロケーション名を入力してください（この外部ロケーションは参加者全員で共有します）
 
-your_catalog = "o9o9dbw" # 講師から提示されるカタログ名を入力してください
-your_schema = "handson_tico_demo01" # 参加者全体で一意となるようあなたに固有の識別子をアルファベットで入力してください
+your_schema = your_identifier + "_schema"
+print("your_identifier = " + your_identifier)
+print("your_catalog = " + your_catalog)
+print("your_schema = " + your_schema)
+print("your_external_location = " + your_external_location)
 
 # COMMAND ----------
 
 # 環境共通パラメータ定義
-
 your_volume = "sample_dataset_volume"
 volume_path = "/Volumes/" + your_catalog + "/" + your_schema + "/" + your_volume
 sample_dataset_path = volume_path
@@ -19,7 +24,7 @@ print("sample_dataset_path = " + sample_dataset_path)
 # 参加者固有スキーマ作成 ＆ コンテキスト設定
 spark.sql(f"USE CATALOG {your_catalog}")
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {your_catalog}.{your_schema}")
-spark.sql(f"USE DATABASE {your_schema}")
+spark.sql(f"USE SCHEMA {your_schema}")
 
 # COMMAND ----------
 
