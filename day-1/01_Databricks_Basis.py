@@ -84,13 +84,13 @@ print("Hello Databricks")
 # COMMAND ----------
 
 # Python がデフォルト言語でマジックコマンドの指示なしに SQL を実行すると Python としてのシンタックスエラーとなります 
-SELECT "Hello Databricks SQL"; 
+
+# SELECT "Hello Databricks SQL"; 
 
 # COMMAND ----------
 
-# Python がデフォルト言語で SQL を実行したい場合はマジックコマンドで言語を指定します 
-%sql
-SELECT "Hello Databricks SQL"; 
+# MAGIC %sql -- Python がデフォルト言語で SQL を実行したい場合はマジックコマンドで言語を指定します 
+# MAGIC SELECT "Hello Databricks SQL"; 
 
 # COMMAND ----------
 
@@ -149,7 +149,8 @@ SELECT "Hello Databricks SQL";
 # COMMAND ----------
 
 # このノートブック内で定義されてない変数の参照はエラー
-print("sample_dataset_path = " + sample_dataset_path)
+
+# print("sample_dataset_path = " + sample_dataset_path)
 
 # COMMAND ----------
 
