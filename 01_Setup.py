@@ -45,7 +45,7 @@
 # MAGIC </br><img src="images/setup.7.png" width="600"/>  
 # MAGIC `includeフォルダ`内の`handson.h ノートブック`を開きます。  
 # MAGIC </br><img src="images/setup.8.png" width="600"/>  
-# MAGIC ノートブック冒頭のセル内で定義された変数（`your_catalog`と`your_schema`）の値を講師に指示に従い編集します。ここではセルを実行する必要はありません。  
+# MAGIC ノートブック冒頭のセル内で定義された変数（`your_identifier`と`your_schema`）の値を講師に指示に従い編集します。ここではセルを実行する必要はありません。  
 # MAGIC
 
 # COMMAND ----------
