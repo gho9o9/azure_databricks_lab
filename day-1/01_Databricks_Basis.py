@@ -1,47 +1,66 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC ## 汎用クラスターの準備
+# MAGIC # はじめに
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ハンズオンコンテンツ（ノートブック）の実行に必要な汎用クラスターを準備します。デプロイモデル(プロビジョニング or サーバレス)は不問です。
+# MAGIC ラボコンテンツ（このノートブック）の実行に必要な Spark クラスタとして汎用コンピューティングクラスタを準備しノートブックにアタッチします。
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 汎用コンピューティングクラスタの準備
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC プロビジョニング or サーバレスで汎用コンピューティングクラスタを準備します。
 # MAGIC
-# MAGIC - プロビジョニング  
+# MAGIC なおこのノートブックの実行において プロビジョニング or サーバレス は不問です。
+# MAGIC
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### プロビジョニング 汎用コンピューティング クラスタ
+# MAGIC
+# MAGIC プロビジョニング汎用コンピューティングを利用する場合は `Databricks Runtime のバージョン` を `Runtime: 13.3 LTS` 以上を指定してください。
+# MAGIC
+# MAGIC またコストの観点からもハンズオンコンテンツの実行においては低スペックな`ノードタイプ（例：Standard_D4ads_v5）` かつ `シングルノード` で十分です。
+# MAGIC
 # MAGIC </br><img src="../images/basis.1.png" width="600"/>  
 # MAGIC </br><img src="../images/basis.2.png" width="600"/>  
-# MAGIC プロビジョニング汎用コンピューティングを利用する場合は `Databricks Runtime のバージョン` を `Runtime: 13.3 LTS` 以上を指定してください。  
-# MAGIC またコストの観点からもハンズオンコンテンツの実行においては低スペックな`ノードタイプ（例：Standard_D4ads_v5）` かつ `シングルノード` で十分です。  
-# MAGIC
-# MAGIC - サーバレス  
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### サーバレス  汎用コンピューティング クラスタ
 # MAGIC サーバレス汎用コンピューティングを利用する場合は明示的なデプロイは不要です。
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 汎用コンピューティングクラスタのアタッチ
 # MAGIC
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## 汎用クラスターのアタッチ
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC 処理の実行に必要なクラスターをアタッチします。  
+# MAGIC 準備した汎用コンピューティングクラスタをこのノートブックにアタッチします。
+# MAGIC
+# MAGIC ノートブックの右肩にあるクラスターリストから準備したクラスターを選択します。停止しているプロビジョニング汎用コンピューティングを選択した場合はそのタイミングで起動が開始されます。 
+# MAGIC
 # MAGIC </br><img src="../images/basis.3.png" width="600"/>  
-# MAGIC ノートブックの右肩にあるクラスターリストから準備したクラスターを選択します。  
-# MAGIC ※. 停止しているプロビジョニング汎用コンピューティングを選択した場合はそのタイミングで起動が開始されます。  
-# MAGIC
+# MAGIC  
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## ノートブックの基本
+# MAGIC # ノートブックの基本
 # MAGIC
 # MAGIC ここでは Databricks での開発における主要ツールとなる[ノートブック](https://learn.microsoft.com/ja-jp/azure/databricks/notebooks/)の基本を学習します。
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### セルの実行
+# MAGIC ## セルの実行
 # MAGIC
 # MAGIC セル内に記述された処理の実行はセルの左上にある `セルの実行` もしくは各種ショートカットキーを使用します。  
 # MAGIC </br><img src="../images/basis.4.png" width="600"/>  
@@ -53,7 +72,7 @@ print("Hello Databricks")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### ノートブック言語の設定
+# MAGIC ## ノートブック言語の設定
 # MAGIC
 # MAGIC 上記のセルはノートブックのデフォルト言語が Python に設定されているため Python コードとして実行されます。  
 # MAGIC
@@ -66,13 +85,13 @@ print("Hello Databricks")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### マジックコマンド
+# MAGIC ## マジックコマンド
 # MAGIC ここでは代表的なマジックコマンドを紹介します。
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### %[lang] : 言語マジック
+# MAGIC ### %[lang] : 言語マジック
 # MAGIC 言語マジックコマンドはノートブックのデフォルト言語以外の言語でコード実行する指示します。
 # MAGIC * <strong><code>&#37;python</code></strong>
 # MAGIC * <strong><code>&#37;sql</code></strong>
@@ -96,7 +115,7 @@ print("Hello Databricks")
 
 # MAGIC %md
 # MAGIC
-# MAGIC #### %md : Markdown
+# MAGIC ### %md : Markdown
 # MAGIC
 # MAGIC マジックコマンド **&percnt;md** により、セル内でマークダウンを記述します。
 # MAGIC * このセルをダブルクリックして編集を開始します
@@ -136,7 +155,7 @@ print("Hello Databricks")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### %run : 別のノートブックのインライン実行
+# MAGIC ### %run : 別のノートブックのインライン実行
 # MAGIC
 # MAGIC **%run** マジックコマンドを使用してノートブックから別のノートブックを実行します。  
 # MAGIC
@@ -164,7 +183,7 @@ print("sample_dataset_path = " + sample_dataset_path)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### %pip : ライブラリのインストール
+# MAGIC ### %pip : ライブラリのインストール
 # MAGIC
 # MAGIC [ノートブックスコープのライブラリ](https://learn.microsoft.com/ja-jp/azure/databricks/libraries/notebooks-python-libraries)は **%pip** を使用してインストールします。  
 # MAGIC
@@ -207,7 +226,7 @@ plt.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### %sh : シェルコードの実行
+# MAGIC ### %sh : シェルコードの実行
 # MAGIC
 # MAGIC **%sh** を使用してシェル コードをノートブック内で実行します。シェル コードはドライバー上で処理されます。  
 
@@ -269,13 +288,13 @@ os.environ["object_storage"] = sample_dataset_path
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### ファイル操作
+# MAGIC ## ファイル操作
 # MAGIC [Databricks Utilities（dbutils）](https://learn.microsoft.com/ja-jp/azure/databricks/dev-tools/databricks-utils) のファイル システム ユーティリティ（dbutils.fs.ls）を使用しファイルを操作します。 
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### UC Volume の操作
+# MAGIC ### UC Volume の操作
 # MAGIC dbutils.fs.ls("/Volumes/\<catalog-name\>/\<schema-name\>/\<volume-name\>/\<path\>")
 
 # COMMAND ----------
@@ -289,7 +308,7 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### ワークスペースファイルの操作（サーバーレスは未サポート）
+# MAGIC ### ワークスペースファイルの操作（サーバーレスは未サポート）
 # MAGIC dbutils.fs.ls("file:/Workspace/Users/\<user-name\>/\<path\>")
 
 # COMMAND ----------
@@ -304,7 +323,7 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### クラウドストレージの操作
+# MAGIC ### クラウドストレージの操作
 # MAGIC dbutils.fs.ls("abfss://\<container-name\>@\<storage-account-name\>.dfs.core.windows.net/\<path\>")
 
 # COMMAND ----------
@@ -324,14 +343,14 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### 参考
+# MAGIC ### 参考
 # MAGIC - [Azure Databricks 上のファイルを操作する](https://learn.microsoft.com/ja-jp/azure/databricks/files/)
 # MAGIC - [Databricksのファイルシステムを可能な限りわかりやすく解説](https://qiita.com/taka_yayoi/items/075c6b3aeafac54c8ac4)
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### ノートブック間でのコード共有する
+# MAGIC ## ノートブック間でのコード共有する
 # MAGIC
 # MAGIC ソースコードファイルをモジュールとしてノートブックにインポートすることでコードを共有できます。  
 # MAGIC
@@ -346,7 +365,7 @@ print(hello("databricks"))
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### ノートブックを通じた共同作業
+# MAGIC ## ノートブックを通じた共同作業
 # MAGIC ノートブックの右肩にある `共有` によって共同作業者へノートブックへのアクセス制御が可能です。
 # MAGIC
 # MAGIC | 能力                                      | 権限なし | 読み取り可能 | 実行可能 | 編集可能 | 管理可能 |
@@ -367,7 +386,7 @@ print(hello("databricks"))
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### ノートブックのインポート・エクスポート
+# MAGIC ## ノートブックのインポート・エクスポート
 # MAGIC ノートブックは次の形式でインポートやエクスポートが可能です。  
 # MAGIC </br><img src="../images/basis.6.png" width="600"/>  
 # MAGIC
@@ -385,7 +404,7 @@ print(hello("databricks"))
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### ノートブックの UI パラメータ
+# MAGIC ## ノートブックの UI パラメータ
 # MAGIC パラメータを受け取る UI をノートブックに追加します。
 # MAGIC
 # MAGIC #### 参考

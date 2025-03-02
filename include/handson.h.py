@@ -1,6 +1,6 @@
 # Databricks notebook source
 # 環境固有パラメータ定義
-your_identifier = "tooota" # 参加者全体で一意となるようあなたに固有の識別子をアルファベットで入力してください
+your_identifier = "handson_tico_demo01" # 参加者全体で一意となるようあなたに固有の識別子をアルファベットで入力してください
 your_catalog = "o9o9dbw" # 講師から提示されるカタログ名を入力してください（このカタログは参加者全員で共有します）
 
 your_schema = your_identifier + "_schema"

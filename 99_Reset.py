@@ -13,8 +13,13 @@
 
 # COMMAND ----------
 
-files = dbutils.fs.ls(f"{sample_dataset}")
+files = dbutils.fs.ls(f"{sample_dataset_path}")
 display(files)
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC DROP SCHEMA IF EXISTS hive_metastore.${your_schema} CASCADE;
 
 # COMMAND ----------
 
