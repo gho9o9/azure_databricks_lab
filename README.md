@@ -8,7 +8,7 @@
 - 外部ロケーションに対する **`READ FILES`**
 - クラスタに対する **`CREATE CLUSTER`** （ユーザー管理画面で`Unrestricted cluster creation`にチェック）
 </br><img src="images/readme.1.png" width="600"/>
-</br><img src="images/readme.3.png" width="600"/>
+</br><img src="images/readme.2.png" width="600"/>
 </br><img src="images/readme.3.png" width="600"/>
 
 #### 必要ツール
