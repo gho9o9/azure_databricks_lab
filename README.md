@@ -2,11 +2,13 @@
 
 #### 参加者権限設定
 一般ユーザーでハンズオンを行う場合は一般ユーザー既定の権限に対して以下の権限を追加してください。
-- USE CATALOG 
-- CREATE SCHEMA
-- CREATE VOLUME
-- CREATE CLUSTER（ユーザー管理画面で`Unrestricted cluster creation`にチェック）
+- カタログに対する **`USE CATALOG`**
+- カタログに対する **`CREATE SCHEMA`**
+- カタログに対する **`CREATE VOLUME`**
+- 外部ロケーションに対する **`READ FILES`**
+- クラスタに対する **`CREATE CLUSTER`** （ユーザー管理画面で`Unrestricted cluster creation`にチェック）
 </br><img src="images/readme.1.png" width="600"/>
+</br><img src="images/readme.3.png" width="600"/>
 </br><img src="images/readme.3.png" width="600"/>
 
 #### 必要ツール
