@@ -1,9 +1,16 @@
 -- Databricks notebook source
 -- MAGIC %md
+-- MAGIC ## はじめに
+-- MAGIC
+-- MAGIC このラボはノートブック内のセルを順次実行していくようなインタラクティブな形式ではなく、以下の「DLT パイプライン設定と実行」の手順に従って DLT ジョブを構成＆実行します。
+
+-- COMMAND ----------
+
+-- MAGIC %md
 -- MAGIC
 -- MAGIC ## DLT パイプライン設定
 -- MAGIC
--- MAGIC 1. サイドバーの **Delta Live Tables** をクリックします。
+-- MAGIC 1. サイドバーの **パイプライン** をクリックします。
 -- MAGIC 1. 前のラボで作成したパイプラインを選択します。
 -- MAGIC 1. `設定`を押下しパイプライン編集画面に遷移します。
 -- MAGIC 1. **ソースコード**で`ソースコードを追加`を押下しナビゲーターを使いこのノートブック（`03_Change Data Capture in DLT`）選択します。

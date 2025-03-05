@@ -1,4 +1,13 @@
 # Databricks notebook source
+# MAGIC %run .././include/handson.h
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC create view view_01 as select 1,2,3;
+
+# COMMAND ----------
+
 files = dbutils.fs.ls("/databricks-datasets/nyctaxi/tables/nyctaxi_yellow")
 display(files)
 
