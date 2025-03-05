@@ -32,17 +32,19 @@
 -- MAGIC 1. **パイプラインモード**は `Trigger` を選択します。本ラボではファイルの取り込みを1回のみ行うため `Trigger` を選択しています。
 -- MAGIC 1. **パス**はナビゲーターを使いこのノートブック（`02_Delta Live Tables`）選択します。
 -- MAGIC </br><img src="../images/dlt.1.png" width="600"/>
+-- MAGIC </br><img src="../images/dlt.4.png" width="600"/>  
 -- MAGIC 1. **ストレージオプション**は `Unity Catalog` を選択し、ラボで利用している `カタログ` と `スキーマ` を選択します。
 -- MAGIC 1. **クラスターポリシー**は `なし` を選択し下記の 3 つを設定します。
+-- MAGIC </br><img src="../images/dlt.5.png" width="600"/>
 -- MAGIC    * **クラスターモード**は `固定サイズ`を選択
 -- MAGIC    * **ワーカ**は `1` を入力
--- MAGIC    * **Photonアクセラレータを使用**に `チェック`します。
+-- MAGIC    * **Photonアクセラレータを使用**に `チェック`します。  
 -- MAGIC 1. （任意）**通知**で`設定を追加`を押下し下記の 3 つを設定します。
 -- MAGIC    * **メール（カンマ区切り）**にメールアドレスを入力
 -- MAGIC    * **更新時**をすべてチェック
 -- MAGIC    * **フロー**をすべてチェック
--- MAGIC 1. **設定**で`設定を追加`を押下し下記の 2 つを設定します。
--- MAGIC    * **キー**に `sample.dataset` を入力し **値**に `handson.h`で定義された `sample_dataset_path`のパス文字列 を入力します。
+-- MAGIC 1. **設定**で`設定を追加`を押下し**キー**に `sample.dataset` を入力し **値**に `handson.h`で定義された `sample_dataset_path`のパス文字列 を入力します。
+-- MAGIC </br><img src="../images/dlt.6.png" width="600"/>
 -- MAGIC 1. **作成**を押下します。
 -- MAGIC 1. **開始**を押下します。
 
@@ -99,6 +101,12 @@ AS SELECT * FROM json.`${sample.dataset}/customers-json` -- 入力元
 -- MAGIC - 入力元が Delta テーブルであるため Auto Loader 利用（増分識別） や スキーマ推論 は不要
 -- MAGIC - Silver 向けのデータ加工として顧客マスターのユーザー情報を付与
 -- MAGIC - 入力データに対する品質チェックを導入しデータ品質を担保
+-- MAGIC </br><img src="https://learn.microsoft.com/ja-jp/azure/databricks/_static/images/delta-live-tables/expectations/expectations-flow-graph.png" width="1000"/>
+-- MAGIC | アクション     | SQL 構文                             | Python 構文       | 結果                                                                                   |
+-- MAGIC |----------------|--------------------------------------|-------------------|----------------------------------------------------------------------------------------|
+-- MAGIC | warn (default) | EXPECT                               | dlt.expect        | 無効なレコードがターゲットに書き込まれます。有効なレコードと無効なレコードの数は、他のデータセットメトリクスとともに記録されます。 |
+-- MAGIC | drop         | EXPECT ... ON VIOLATION DROP ROW     | dlt.expect_or_drop| 無効なレコードは、データがターゲットに書き込まれる前に削除されます。ドロップされたレコードの数は、他のデータセットメトリクスとともにログに記録されます。 |
+-- MAGIC | fail       | EXPECT ... ON VIOLATION FAIL UPDATE  | dlt.expect_or_fail| レコードが無効な場合、更新は成功しません。再処理の前に手動による介入が必要です。この予想により、1 つのフローが失敗し、パイプライン内の他のフローが失敗することはありません。 |
 
 -- COMMAND ----------
 
@@ -114,17 +122,6 @@ AS
   FROM STREAM(LIVE.02_bronze_orders) o
   LEFT JOIN LIVE.02_lookup_customers c
     ON o.customer_id = c.customer_id
-
--- COMMAND ----------
-
--- MAGIC %md
--- MAGIC >> Constraint violation
--- MAGIC
--- MAGIC | **`ON VIOLATION`** | Behavior |
--- MAGIC | --- | --- |
--- MAGIC | **`DROP ROW`** | Discard records that violate constraints |
--- MAGIC | **`FAIL UPDATE`** | Violated constraint causes the pipeline to fail  |
--- MAGIC | Omitted | Records violating constraints will be kept, and reported in metrics |
 
 -- COMMAND ----------
 

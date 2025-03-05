@@ -3,6 +3,76 @@
 -- MAGIC ## はじめに
 -- MAGIC
 -- MAGIC このラボはノートブック内のセルを順次実行していくようなインタラクティブな形式ではなく、以下の「DLT パイプライン設定と実行」の手順に従って DLT ジョブを構成＆実行します。
+-- MAGIC
+-- MAGIC このノートブックでは DLT における CDC ソースからの継続マージロードのサンプルコードを示します。
+-- MAGIC
+-- MAGIC **CDC ソース**
+-- MAGIC | userid | name     | city        | operation | sequenceNum |
+-- MAGIC |--------|----------|-------------|-----------|-------------|
+-- MAGIC | 124    | Raul     | Oaxaca      | INSERT    | 1           |
+-- MAGIC | 123    | Isabel   | Monterrey   | INSERT    | 1           |
+-- MAGIC | 125    | Mercedes | Tijuana     | INSERT    | 2           |
+-- MAGIC | 126    | Lily     | Cancun      | INSERT    | 2           |
+-- MAGIC | 123    | null     | null        | DELETE    | 6           |
+-- MAGIC | 125    | Mercedes | Guadalajara | UPDATE    | 6           |
+-- MAGIC | 125    | Mercedes | Mexicali    | UPDATE    | 5           |
+-- MAGIC | 123    | Isabel   | Chihuahua   | UPDATE    | 5           |
+-- MAGIC
+-- MAGIC **① SCD Type-1(更新履歴を表現しない) によるマージ**
+-- MAGIC
+-- MAGIC **_SQL_**  
+-- MAGIC ```SQL
+-- MAGIC CREATE OR REFRESH STREAMING TABLE target;
+-- MAGIC
+-- MAGIC APPLY CHANGES INTO live.target
+-- MAGIC FROM stream(cdc_data.users)
+-- MAGIC KEYS (userId)
+-- MAGIC APPLY AS DELETE WHEN
+-- MAGIC   operation = "DELETE"
+-- MAGIC SEQUENCE BY sequenceNum
+-- MAGIC COLUMNS * EXCEPT (operation, sequenceNum)
+-- MAGIC STORED AS SCD TYPE 1;
+-- MAGIC ```
+-- MAGIC
+-- MAGIC **_結果_**
+-- MAGIC | userId | name     | city        |
+-- MAGIC |--------|----------|-------------|
+-- MAGIC | 124    | Raul     | Oaxaca      |
+-- MAGIC | 125    | Mercedes | Guadalajara |
+-- MAGIC | 126    | Lily     | Cancun      |
+-- MAGIC
+-- MAGIC **② SCD Type-2(更新履歴を表現する) によるマージ**
+-- MAGIC
+-- MAGIC **_SQL_** 
+-- MAGIC ```SQL
+-- MAGIC CREATE OR REFRESH STREAMING TABLE target;
+-- MAGIC
+-- MAGIC APPLY CHANGES INTO live.target
+-- MAGIC FROM stream(cdc_data.users)
+-- MAGIC KEYS (userId)
+-- MAGIC APPLY AS DELETE WHEN
+-- MAGIC   operation = "DELETE"
+-- MAGIC SEQUENCE BY sequenceNum
+-- MAGIC COLUMNS * EXCEPT (operation, sequenceNum)
+-- MAGIC STORED AS SCD TYPE 2;
+-- MAGIC ```
+-- MAGIC
+-- MAGIC **_結果_**
+-- MAGIC | userId | name     | city       | __START_AT | __END_AT |
+-- MAGIC |--------|----------|------------|------------|----------|
+-- MAGIC | 123    | Isabel   | Monterrey  | 1          | 5        |
+-- MAGIC | 123    | Isabel   | Chihuahua  | 5          | 6        |
+-- MAGIC | 124    | Raul     | Oaxaca     | 1          | null     |
+-- MAGIC | 125    | Mercedes | Tijuana    | 2          | 5        |
+-- MAGIC | 125    | Mercedes | Mexicali   | 5          | 6        |
+-- MAGIC | 125    | Mercedes | Guadalajara| 6          | null     |
+-- MAGIC | 126    | Lily     | Cancun     | 2          | null     |
+-- MAGIC
+-- MAGIC **参考**
+-- MAGIC - [変更データ キャプチャ (CDC) とは](https://learn.microsoft.com/ja-jp/azure/databricks/delta-live-tables/what-is-change-data-capture)
+-- MAGIC - [APPLY CHANGES API: Delta Live Tables を使用した変更データ キャプチャの簡略化](https://learn.microsoft.com/ja-jp/azure/databricks/delta-live-tables/cdc)
+-- MAGIC
+-- MAGIC それでは実際に試してみましょう。
 
 -- COMMAND ----------
 
@@ -14,6 +84,7 @@
 -- MAGIC 1. 前のラボで作成したパイプラインを選択します。
 -- MAGIC 1. `設定`を押下しパイプライン編集画面に遷移します。
 -- MAGIC 1. **ソースコード**で`ソースコードを追加`を押下しナビゲーターを使いこのノートブック（`03_Change Data Capture in DLT`）選択します。
+-- MAGIC </br><img src="../images/dlt.7.png" width="800"/>
 -- MAGIC 1. **保存**を押下します。
 -- MAGIC 1. **開始**を押下します。
 
@@ -34,6 +105,16 @@ COMMENT "The raw books data, ingested from CDC feed" -- コメント
 AS SELECT * FROM cloud_files( -- Auto Loader 利用宣言（増分識別の機能有効化）
                              "${sample.dataset}/books-cdc", -- 入力元
                              "json") -- Foramat 指定
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC 入力元となる CDC ソースは以下のデータです。
+-- MAGIC </br><img src="../images/cdc.1.png" width="1200"/>
+-- MAGIC マージを行うために必要な以下の情報を持っていることが確認できます。
+-- MAGIC - 一意キー（book_id） ← スキーマ定義でなければわかりませんがここでは book_id が一意キーであることが前提です
+-- MAGIC - 時系列を判定するためのシーケンス（row_time）
+-- MAGIC - キーで示されるレコードに対して行われた操作（row_status）
 
 -- COMMAND ----------
 
