@@ -291,7 +291,7 @@ from pyspark.sql.types import StringType
 # UDF 関数の定義
 def llm_classifier_udf(query):
     DATABRICKS_TOKEN = "<YOUR_DATABRICKS_TOKEN>"
-    HOST = 'https://adb-1450470117424213.13.azuredatabricks.net'
+    HOST = "<YOUR_DATABRICKS_URL>"
 
     try:
         # モデルの初期化を関数内で行う
