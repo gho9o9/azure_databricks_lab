@@ -135,6 +135,16 @@ df_silver.count()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ### ★どこでいる？★設定実施
+
+# COMMAND ----------
+
+# MAGIC %pip install langchain=="0.1.14" langchain-openai=="0.1.1"
+# MAGIC %pip install mlflow
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## AI Functions による商品の自動分類
 # MAGIC
 # MAGIC このラボでは **`ai_query()` 関数** 関数を利用し商品の自動分類を行います。
