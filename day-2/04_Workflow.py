@@ -1,5 +1,10 @@
 # Databricks notebook source
 # MAGIC %md
+# MAGIC # Workflow
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC
 # MAGIC ## ワークフロー設定
 # MAGIC
@@ -7,7 +12,7 @@
 # MAGIC 1. **ジョブを作成**をクリックします。
 # MAGIC 1. **ジョブ名**を入力します。名称は参加者全体で一意となるようあなたに固有の識別子を含めてください。
 # MAGIC 1. 以下の手順で`ノートブック タスク`を設定します。
-# MAGIC    1. **タスク名**：`Ingest_Data`
+# MAGIC    1. **タスク名**：`Ingest_Data`（これはデモ用にデータの新着を疑似する処理です）
 # MAGIC    1. **種類**：`ノートブック`
 # MAGIC    1. **ソース**：`ワークスペース`
 # MAGIC    1. **パス**：ナビゲーターを使いこのノートブック（`04_Workflow`）選択

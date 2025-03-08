@@ -1,5 +1,14 @@
 # Databricks notebook source
 # MAGIC %md
+# MAGIC # Databricks SQL
+# MAGIC
+# MAGIC Databricks SQL は DWH として各種アプリケーションからの接続を提供します。
+# MAGIC
+# MAGIC このノートブックでは各種アプリケーションからの接続を簡単に紹介します。
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## 各種アプリケーションからの接続
 # MAGIC
 # MAGIC 1. サイドバーの **SQL ウェアハウス** をクリックし、いずれかの SQL ウェアハウスを選択します。

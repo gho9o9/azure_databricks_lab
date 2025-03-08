@@ -1,16 +1,42 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC ## Power BI によるデータ可視化
+# MAGIC # Databricks SQL
 # MAGIC
-# MAGIC 1. Power BI Desktop を起動し、**データを取得**から  **Azure Databricks** を選択し**接続**を押下します。
-# MAGIC </br><img src="../images/05.3.19.png" width="600" />  
-# MAGIC Azure Databricks への接続情報を入力し **OK** を押下します。
-# MAGIC </br><img src="../images/05.3.20.png" width="600" />  
-# MAGIC Azure Databricks への接続情報は **SQL ウェアハウス**の **接続の詳細**で確認できます。  
+# MAGIC Databricks SQL（DWH）を利用しデータ加工とデータ可視化を行います。
+# MAGIC
+# MAGIC データ可視化は Power BI を利用します。
+# MAGIC
+# MAGIC このノートブックでは Databricks SQL と Power BI を利用した可視化の手順を解説します。
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## SQL ウェアハウス への接続情報の確認
+# MAGIC **SQL ウェアハウス**の接続情報は**接続の詳細**で確認できます。  
 # MAGIC </br><img src="../images/05.3.21.png" width="600" />  
+# MAGIC ここでは以下の情報をメモしてください。
+# MAGIC - サーバーのホスト名
+# MAGIC - HTTPパス
+# MAGIC
 # MAGIC もしくは右上上部のドロップダウンメニュから `次で開く：Power BI デスクトップ`を選択し**接続ファイルをダウンロード**を押下しダウンロードした pbix ファイル を開くことでも同様です。
 # MAGIC </br><img src="../images/05.3.1.png" width="600" />  
 # MAGIC </br><img src="../images/05.3.2.png" width="600" />  
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Power BI によるデータ可視化
+# MAGIC
+# MAGIC 1. Power BI Desktop を起動し**空のレポート**を押下します。
+# MAGIC </br><img src="../images/pbi.1.png" width="600" />  
+# MAGIC 1. **データを取得**から  **Azure Databricks** を選択し**接続**を押下します。
+# MAGIC </br><img src="../images/05.3.19.png" width="600" />  
+# MAGIC Azure Databricks への接続情報を入力し **OK** を押下します。
+# MAGIC - サーバー ホスト名：上でメモした情報を入力します。
+# MAGIC - HTTP パス：上でメモした情報を入力します。
+# MAGIC - 既定のカタログ：カタログ名を入力します。
+# MAGIC - データベース：スキーマ名を入力します。
+# MAGIC </br><img src="../images/05.3.20.png" width="600" />  
 # MAGIC 1. Azure Entra ID 認証を行ったのち Databricks へ接続します。
 # MAGIC </br><img src="../images/05.3.3.png" width="300" />
 # MAGIC 1. スキーマの一覧から `05_gold_nyctaxi` を選択します。

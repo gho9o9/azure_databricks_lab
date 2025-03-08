@@ -1,5 +1,10 @@
 -- Databricks notebook source
 -- MAGIC %md
+-- MAGIC # Change Data Capture in DLT
+
+-- COMMAND ----------
+
+-- MAGIC %md
 -- MAGIC ## はじめに
 -- MAGIC
 -- MAGIC このラボはノートブック内のセルを順次実行していくようなインタラクティブな形式ではなく、以下の「DLT パイプライン設定と実行」の手順に従って DLT ジョブを構成＆実行します。
