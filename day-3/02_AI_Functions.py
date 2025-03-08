@@ -263,3 +263,24 @@ df.limit(10).createOrReplaceTempView("amazon_review")
 # MAGIC   ai_analyze_sentiment(review) AS sentiment
 # MAGIC FROM
 # MAGIC   amazon_review;
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## 参考：UDF による実装
+# MAGIC AI Functions と同様の AI 機能を UDF（ユーザー定義関数）で実装することも可能です。
+# MAGIC
+# MAGIC UDF はユーザーが独自にPython などで定義できる関数で DataFrame API に統合して利用できます。また SQL 関数を Python で実装することで SQL Warehouse にも統合が可能です。
+# MAGIC
+# MAGIC UDF により通常の組み込み関数では対応できないカスタマイズが必要なデータ操作が行えます。
+# MAGIC
+# MAGIC **参考**
+# MAGIC - [生成AIを活用したテキスト分類/名寄せのアイデア【Databricks】](https://qiita.com/pepperland_sk/items/0cd9f8a3dece8eb67db3)
+
+# COMMAND ----------
+
+model_serving_endpoint_name = f"gpt-4o-{your_identifier}"
+
+# COMMAND ----------
+
+df_silver = spark.table(f"{your_catalog}.{your_schema}.07_silver_snack")
