@@ -284,3 +284,47 @@ model_serving_endpoint_name = f"gpt-4o-{your_identifier}"
 # COMMAND ----------
 
 df_silver = spark.table(f"{your_catalog}.{your_schema}.07_silver_snack")
+
+# COMMAND ----------
+
+from langchain.chat_models import ChatOpenAI
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType
+
+# UDF 関数の定義
+def llm_classifier_udf(query):
+    DATABRICKS_TOKEN = "<YOUR_DATABRICKS_TOKEN>"
+    HOST = 'https://adb-1450470117424213.13.azuredatabricks.net'
+
+    try:
+        # モデルの初期化を関数内で行う
+        model = ChatOpenAI(
+            model_name=f"{model_serving_endpoint_name}",
+            openai_api_base=f"{HOST}/serving-endpoints/",
+            openai_api_key=DATABRICKS_TOKEN
+        )
+
+        labels_list = ["ジャガサラダ", "カリカリえびせん", "ポテトチップス"]
+        # ラベルの取得
+        labels = labels_list
+
+        # プロンプトの作成
+        prompt_text = f"""
+        入力されたワードに対して、ラベル候補に基づいてラベリングを行ってください。
+        - 分類対象のワード: {query}
+        - 分類を行うラベルの候補: {labels}
+        - レスポンスのフォーマット: 以下に示す"label"と"confidence"のキーを持つJSONオブジェクトのみを返してください（```jsonの記述は不要です）。
+        """
+
+        # モデルを使用して予測を取得
+        response = model.predict(prompt_text)
+        # # JSON レスポンスをパース
+        # res_dict = json.loads(response)
+        # return res_dict.get('label', None)
+        
+        return response
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# UDF の登録
+llm_classifier_spark_udf = udf(llm_classifier_udf, StringType())
