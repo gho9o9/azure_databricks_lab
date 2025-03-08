@@ -135,16 +135,6 @@ df_silver.count()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### ★どこでいる？★設定実施
-
-# COMMAND ----------
-
-# MAGIC %pip install langchain=="0.1.14" langchain-openai=="0.1.1"
-# MAGIC %pip install mlflow
-
-# COMMAND ----------
-
-# MAGIC %md
 # MAGIC ## AI Functions による商品の自動分類
 # MAGIC
 # MAGIC このラボでは **`ai_query()` 関数** 関数を利用し商品の自動分類を行います。
@@ -287,6 +277,13 @@ df_silver = spark.table(f"{your_catalog}.{your_schema}.07_silver_snack")
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC 以下のセルの実行前にコード内に変数を設定してください。
+# MAGIC - `HOST`：Databricks ワークスペースのエンドポイント（例：https://adb-xxx.azuredatabricks.net）
+# MAGIC - `DATABRICKS_TOKEN`：[個人用アクセストークン（PAT）](https://learn.microsoft.com/ja-jp/azure/databricks/dev-tools/auth/pat)を指定してください。
+
+# COMMAND ----------
+
 from langchain.chat_models import ChatOpenAI
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
@@ -328,3 +325,48 @@ def llm_classifier_udf(query):
 
 # UDF の登録
 llm_classifier_spark_udf = udf(llm_classifier_udf, StringType())
+
+# COMMAND ----------
+
+# テスト
+data = [("ポテトチップスのりしお")]
+columns = ["product"]
+pysparkDF = spark.createDataFrame(data = data, schema = columns)
+res = llm_classifier_udf(pysparkDF[0])
+print(res)
+
+# COMMAND ----------
+
+import pyspark.sql.functions as F
+
+# データフレームへの適用
+df_with_predictions = (
+    df_silver.limit(10) # デモではデータを10件に絞ります
+    .withColumn('predicted_label', llm_classifier_spark_udf(df_silver['中身商品名']))
+    #.withColumn("clean_json", F.regexp_replace(F.col("predicted_label"), "```json\\n|```", ""))
+)
+
+display(df_with_predictions)
+
+# COMMAND ----------
+
+from pyspark.sql.types import StructType, StructField, StringType
+
+# JSONのスキーマを定義
+json_schema = StructType([
+    StructField("label", StringType(), True),
+    StructField("confidence", StringType(), True)  # confidenceが数値の場合はDoubleType()に変更
+])
+
+# JSON文字列をStructTypeに変換
+df_parsed = df_with_predictions.withColumn("json_data", F.from_json(F.col("predicted_label"), json_schema))
+
+# json_dataのフィールドを個別の列として取得
+df_result = df_parsed.select(
+    F.col("商品名"),
+    F.col("中身商品名"),
+    F.col("json_data.label").alias("商品カテゴリ"),
+    F.col("json_data.confidence").alias("信頼度")
+)
+
+display(df_result)
