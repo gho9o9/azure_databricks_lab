@@ -12,6 +12,10 @@ dbutils.widgets.text("schema_name", "")
 schema_name = dbutils.widgets.get("schema_name")
 print(f"schema_name is {schema_name}")
 
+dbutils.widgets.text("table_name_prefix", "")
+table_name_prefix = dbutils.widgets.get("table_name_prefix")
+print(f"table_name_prefix is {table_name_prefix}")
+
 # COMMAND ----------
 
 # MAGIC %md
@@ -32,9 +36,10 @@ def add_pk(
     pk_key="Id",
     pk_already_exists_text="already exists. Please delete the old constraint first",
 ):
-    full_table_name = f"`{catalog_name}`.`{schema_name}`.`{table_name}`"
+    table_name_w_prefix = f"{table_name_prefix}{table_name}"
+    full_table_name = f"`{catalog_name}`.`{schema_name}`.`{table_name_w_prefix}`"
     add_pk_sql = f"""
-    ALTER TABLE {full_table_name} ADD CONSTRAINT `{table_name}_pk`
+    ALTER TABLE {full_table_name} ADD CONSTRAINT `{table_name_w_prefix}_pk`
         PRIMARY KEY({pk_key})
         RELY;
     """
@@ -60,12 +65,12 @@ def add_fk(
 ):
     if len(child_relationships) != 0:
         first_child_relationship = child_relationships[0]
-        parent_table = first_child_relationship["parent_table"].lower()
+        parent_table = f"{table_name_prefix}" + first_child_relationship["parent_table"].lower()
         parent_full_table_name = f"`{catalog_name}`.`{schema_name}`.`{parent_table}`"
         parent_column_name = first_child_relationship["parent_column"]
 
         for child_r in child_relationships:
-            child_table = child_r["childSObject"].lower()
+            child_table = f"{table_name_prefix}" + child_r["childSObject"].lower()
             child_full_table_name = f"`{catalog_name}`.`{schema_name}`.`{child_table}`"
             child_column_name = child_r["field"]
 

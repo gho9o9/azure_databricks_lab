@@ -292,6 +292,29 @@ print()
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## クリーンアップ
+
+# COMMAND ----------
+
+term_notebooks = [
+    "./include/04_drop_tables",
+]
+notebook_parameters = {
+    "catalog_name": your_catalog,
+    "schema_name": your_schema,
+    "sample_dataset_path": sample_dataset_path,
+    "table_name_prefix": table_name_prefix,
+}
+for term_notebook in term_notebooks:
+    dbutils.notebook.run(
+        term_notebook,
+        0,
+        notebook_parameters,
+    )
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## 参考リンク
 # MAGIC
 # MAGIC - [AI/BI Genie スペースとは](https://learn.microsoft.com/ja-jp/azure/databricks/genie/)
