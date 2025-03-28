@@ -3,7 +3,6 @@
 - Databricks ワークスペース
 - Databricks カタログ
 - ラボユーザーへの権限割り当て
-- Power BI Desktop のインストール
 - ラボ受講者への案内
 
 ## Databricks ワークスペース
@@ -35,17 +34,14 @@ Unity Catalog が有効化された Azure Databricks ワークスペースを用
 - クラスタに対する **`CREATE CLUSTER`** （ユーザー管理画面で`Unrestricted cluster creation`にチェック）
 </br><img src="images/readme.3.png" width="600"/>
 
-## Power BI Desktop のインストール
-[Power BI Desktop](https://www.microsoft.com/ja-jp/power-platform/products/power-bi/desktop) を各自の PC にインストールしてください。最新版が望ましいです。
-</br><img src="images/readme.4.png" width="600"/>
-</br><img src="images/readme.5.png" width="600"/>
-
 ## ラボ受講者への案内
 以下の情報を受講者へ案内してください。
 - Databricks ワークスペースの URL
 - Unity Catalog カタログ名
-- ラボコンテンツの Repo アドレス
-  * https://github.com/gho9o9/adb-handson/blob/main/01_Setup.ipynb
+- ラボコンテンツの [Repo アドレス](https://github.com/gho9o9/azure_databricks_lab)（https://github.com/gho9o9/azure_databricks_lab）
+- 各自の PC への[Power BI Desktop](https://www.microsoft.com/ja-jp/power-platform/products/power-bi/desktop) のインストール（最新版が望ましいです）
+</br><img src="images/readme.4.png" width="600"/>
+</br><img src="images/readme.5.png" width="600"/>
 
 # Next Action:
 ラボ当日を迎えましょう！ラボ受講者は<a href="$./01_Setup">こちらのノートブック</a>からスタートします。
