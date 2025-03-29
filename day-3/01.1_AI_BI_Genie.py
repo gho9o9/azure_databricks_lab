@@ -74,6 +74,8 @@ for init_notebook in init_notebooks:
 
 # COMMAND ----------
 
+from pyspark.sql.functions import lit, col
+
 # 対象テーブルの確認
 
 table_list_df = spark.sql(f"SHOW TABLES IN {your_catalog}.{your_schema} LIKE '{table_name_prefix}*'")
